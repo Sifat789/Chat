@@ -25,7 +25,8 @@ const SignUp: React.FC = () => {
           name: name,
           joinedAt: serverTimestamp(),
           isOnline: true,
-          email:email
+          email:email,
+          profilePic: ''
         })
         navigate("/login")
       }

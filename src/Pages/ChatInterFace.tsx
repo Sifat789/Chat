@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import MessageTem from '../Components/MessageTem'
 import MessageTemRight from '../Components/MessageTemRight'
 import { Link, useParams } from 'react-router-dom'
-import { FieldValue, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp, Timestamp } from 'firebase/firestore'
+import { FieldValue, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp, Timestamp, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '../Firebase'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../Redux/ReduxStore'
@@ -16,7 +16,7 @@ interface InputmessageType {
 export interface messagesType {
   message: string
   id: string
-  date: string
+  date: Timestamp
   img: string
   senderId: string
 }
@@ -26,6 +26,7 @@ export interface receiverUserType {
   isOnline: boolean
   joined: string
   email: string
+  profilePic: string
 }
 
 const ChatInterFace = () => {
@@ -36,22 +37,10 @@ const ChatInterFace = () => {
   const [messages, setmessages] = useState<messagesType[]>()
   const [isNewChat, setisNewChat] = useState<Boolean>(false)
   const [receiverUser, setreceiverUser] = useState<receiverUserType>()
+  const [isSendClicked, setisSendClicked] = useState<boolean>(false)
+  const scrollRefMounted = useRef(false)
+  const scrollRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch()
-
-  // const combineID = (): string => {
-  //   if (recieverId.id) {
-  //     if (recieverId.id > currentUser.id) return recieverId.id + currentUser.id
-  //     else return currentUser.id + recieverId.id
-  //   }
-  //   else return ''
-  // }
-  // const combineID = (): string => {
-  //   if (recieverId.id && currentUser.id) {
-  //     return recieverId.id.localeCompare(currentUser.id) <= 0 ? recieverId.id + currentUser.id : currentUser.id + recieverId.id;
-  //   }
-  //   else return ''
-
-  // }
 
 
 
@@ -67,6 +56,11 @@ const ChatInterFace = () => {
     return result;
   }
 
+  const scroll = () => {
+    scrollRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' })
+  }
+
+  //Getting users
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user?.displayName) {
@@ -81,12 +75,12 @@ const ChatInterFace = () => {
       if (recieverId) {
         const recceiveruser = await getDoc(doc(db, 'UserInfo', recieverId))
         if (recceiveruser.exists()) {
-          console.log('recuser', recceiveruser.data())
           setreceiverUser({
             name: recceiveruser.data().name,
             isOnline: recceiveruser.data().isOnline,
             joined: recceiveruser.data().joinedAt,
-            email: recceiveruser.data().email
+            email: recceiveruser.data().email,
+            profilePic: recceiveruser.data().profilePic
           })
         }
       }
@@ -94,39 +88,55 @@ const ChatInterFace = () => {
     getReceiver()
   }, [])
 
+  //scroll
+  useEffect(() => {
+    scroll()
+  }, [scrollRefMounted.current])
+
+
+  //Getting previous messages
   useEffect(() => {
     const getMessages = async () => {
-      if(combineID) {
+      if (combineID) {
         const docRef = doc(db, 'UserChats', combineID)
-      console.log('ref',docRef)
-      const docSnap = await getDoc(docRef);
-      console.log('docsnap',docSnap.data())
+        const docSnap = await getDoc(docRef);
+        console.log(docSnap.exists())
 
-      if (docSnap.exists()) {
-        setisNewChat(false)
-        const messagesTmp: messagesType[] = []
-        docSnap.data().messages.map((doc: messagesType) => {
-          messagesTmp.push({
-            message: doc.message,
-            id: doc.id,
-            img: doc.img,
-            date: doc.date,
-            senderId: doc.senderId
+        if (docSnap.exists()) {
+          setisNewChat(false)
+          const messagesTmp: messagesType[] = []
+          docSnap.data().messages.map((doc: messagesType) => {
+            messagesTmp.push({
+              message: doc.message,
+              id: doc.id,
+              img: doc.img,
+              date: doc.date,
+              senderId: doc.senderId
+            })
           })
-        })
-        setmessages(messagesTmp)
-        console.log(docSnap.data())
-      }
-      
-      } else {
-        setisNewChat(true)
+          setmessages(messagesTmp)
+        } else {
+          setisNewChat(true)
+        }
+
       }
     }
 
     getMessages()
   }, [])
 
-  console.log('messages',messages)
+  useEffect(() => {
+    messages?.map((message, index) => {
+      if (index + 1 === messages.length) {
+        if (currentUser.id && recieverId)
+          updateDoc(doc(db, 'latestMessages', currentUser.id, 'latest', recieverId), {
+            haveIseenIt: true
+          })
+      }
+    })
+  }, [messages])
+
+
 
   const handleSend = async () => {
     if (isNewChat && combineID) {
@@ -142,12 +152,39 @@ const ChatInterFace = () => {
         })
         setInputmessage({ text: '', img: '' })
         setisNewChat(false)
+        if (Inputmessage) {
+          const messagesTmp: messagesType[] = []
+          messagesTmp.push({
+            message: Inputmessage.text,
+            img: Inputmessage.img,
+            senderId: currentUser.id,
+            date: Timestamp.now(),
+            id: generateRandomString()
+          })
+          setmessages(messagesTmp)
+          scroll()
+          if (currentUser.id && recieverId) {
+            await setDoc(doc(db, 'latestMessages', currentUser.id, 'latest', recieverId), {
+              message: Inputmessage,
+              timestamp: Timestamp.now(),
+              haveIseenIt: true,
+              senderId: currentUser.id,
+            })
+
+            await setDoc(doc(db, 'latestMessages', recieverId, 'latest', currentUser.id), {
+              message: Inputmessage,
+              timestamp: Timestamp.now(),
+              haveIseenIt: false,
+              senderId: currentUser.id,
+            })
+          }
+        }
       } catch (err) {
         console.log(err)
       }
     } else {
       try {
-        if(combineID) {
+        if (combineID) {
           await updateDoc(doc(db, 'UserChats', combineID), {
             messages: arrayUnion({
               message: Inputmessage?.text,
@@ -157,30 +194,83 @@ const ChatInterFace = () => {
               id: generateRandomString()
             })
           })
-  
+
           setInputmessage({ text: '', img: '' })
+          if (messages && Inputmessage) {
+            const messagesTmp: messagesType[] = messages
+            messagesTmp.push({
+              message: Inputmessage.text,
+              img: Inputmessage.img,
+              senderId: currentUser.id,
+              date: Timestamp.now(),
+              id: generateRandomString()
+            })
+            setmessages(messagesTmp)
+            scroll()
+          }
         }
+
+        if (currentUser.id && recieverId) {
+          await setDoc(doc(db, 'latestMessages', currentUser.id, 'latest', recieverId), {
+            message: Inputmessage,
+            timestamp: Timestamp.now(),
+            haveIseenIt: true,
+            senderId: currentUser.id,
+          })
+
+          await setDoc(doc(db, 'latestMessages', recieverId, 'latest', currentUser.id), {
+            message: Inputmessage,
+            timestamp: Timestamp.now(),
+            haveIseenIt: false,
+            senderId: currentUser.id,
+          })
+        }
+
       } catch (err) {
         console.log(err)
       }
     }
   }
 
+  console.log(isNewChat)
+
   return (
     <div className='border-2 h-[100vh] relative border-solid border-red-500'>
       <Link to={'/'}>Back</Link>
-      <div className='border-solid border-pink-500 border-2 h-[85%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'>
+      <div className='border-solid border-pink-500 border-2 h-[88%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'>
         {
-          messages?.map((message) => {
+          messages?.map((message, index) => {
             if (message.senderId === currentUser.id) {
-              return <MessageTemRight message={message} key={message.id} />
+              if (messages.length === index + 1) {
+                scrollRefMounted.current=true
+                return <div>
+                  <MessageTemRight message={message} key={message.id} />
+                  <div ref={scrollRef} className='bg-transparent'>
+                    <h1 className='text-9xl text-transparent'>Sifat Chat</h1>
+                  </div>
+                </div>
+              }
+              else return <MessageTemRight message={message} key={message.id} />
             }
             else {
-              if(receiverUser)
-              return <MessageTem message={message} receiverUser={receiverUser} key={message.id} />
+              if (receiverUser) {
+                if (messages.length === index + 1) {
+                  scrollRefMounted.current=true
+                  return <div>
+                    <MessageTem message={message} receiverUser={receiverUser} key={message.id} />
+                    <div ref={scrollRef} className='bg-transparent'>
+                      <h1 className='text-9xl text-transparent'>Sifat Chat</h1>
+                    </div>
+                  </div>
+                }
+                else return <MessageTem message={message} receiverUser={receiverUser} key={message.id} />
+              }
+
             }
           })
         }
+
+
 
 
       </div>
