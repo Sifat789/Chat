@@ -27,14 +27,15 @@ const MessageTemRight: React.FC<MessageTemType> = ({message}) => {
       
         return localDateTimeString;
       }
+
+    const handleWidthLength = (length:number) => {
+        return Math.min(length,25)
+    }
     return (
         <div className='flex flex-col'>
-            <span className='self-center'>{formatDateToLocal(message.date)}</span>
+            <span className='self-center mb-2'>{formatDateToLocal(message.date)}</span>
             <div className='flex justify-end'>
-                <h1 className='w-[88%] bg-blue-500 text-white p-2 rounded-md mr-2'>{message.message? message.message: message.img}</h1>
-                <div className='flex self-end space-x-2 items-center mt-1'>
-                    <span className='h-10 w-10 rounded-full flex justify-center items-center bg-blue-500 self-end'>{currentUser.name[0]}</span>
-                </div>
+                <h1  className=' max-w-[70vw] bg-blue-500 text-white p-2 rounded-md mr-2'>{message.message? message.message: message.img}</h1>
             </div>
         </div>
     );

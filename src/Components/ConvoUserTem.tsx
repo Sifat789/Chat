@@ -3,14 +3,14 @@ import { convoUsersType } from '../Pages/Home'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../Redux/ReduxStore'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../Firebase'
 
 interface ConvoUserTemType {
     user: convoUsersType
 }
 
-interface recieverType {
+export interface recieverType {
     name: string
     isOnline: boolean
     profilePic: string
@@ -30,35 +30,41 @@ const ConvoUserTem: React.FC<ConvoUserTemType> = ({ user }) => {
     }
 
     useEffect(() => {
-        const getUser = async () => {
-            const res = await getDoc(doc(db, 'UserInfo', user.recieverid))
-            if (res.exists()) {
+        const unsub = onSnapshot(doc(db, 'UserInfo', user.recieverid), (doc) => {
+            if (doc.exists()) {
                 setreciever({
-                    name: res.data().name,
-                    isOnline: res.data().isOnline,
-                    profilePic: ''
+                    name: doc.data().name,
+                    isOnline: doc.data().isOnline,
+                    profilePic: doc.data().profilePic
                 })
             }
-        }
+        })
 
-        getUser()
+        return unsub
     }, [])
 
-   console.log(user)
+    const handleMessageLength = (message: string) => {
+        if(message.length>20) return `${message.slice(0,20)}...`
+        else return message
+    }
 
     return (
         <Link to={`/chatroom/${user.recieverid}/${combineID()}`}>
             <div className='border-2 border-solid border-red-400 bg-white shadow-lg flex space-x-6 items-center py-3 rounded-md justify-between'>
                 <div className='flex items-center space-x-3'>
-                    <span className='h-11 w-11 ml-3 flex items-center justify-center bg-blue-500 rounded-full'>{reciever?.name[0]}</span>
+                    <div className='flex'>
+                        <span className='h-11 w-11 ml-3 flex items-center justify-center bg-blue-500 rounded-full'>{reciever?.name[0]}</span>
+                        {
+                            reciever?.isOnline ? (
+                                <span className='self-end h-3 w-3 border-2  border-white border-solid relative right-3 rounded-full bg-green-500'></span>
+                            ) : ('')
+                        }
+                    </div>
+
                     <div>
                         <h1 className='font-bold'>{reciever?.name}</h1>
-                        <h1>{user.senderId === currentUser.id? `me: ${user.messase.text}` :  user.messase.text }</h1>
+                        <h1>{user.senderId === currentUser.id ? `me: ${handleMessageLength(user.messase.text)}` : handleMessageLength(user.messase.text)}</h1>
                     </div>
-                </div>
-
-                <div className=''>
-                    {reciever?.isOnline ? 'online' : 'offline'}
                 </div>
             </div>
         </Link>

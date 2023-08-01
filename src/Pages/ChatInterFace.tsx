@@ -8,6 +8,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../Redux/ReduxStore'
 import { onAuthStateChanged } from 'firebase/auth'
 import { setCurUser } from '../Redux/CurUserSlice'
+import { OnlineStatus } from '../CustomHooks/OnlineStatus'
+import UserTem from '../Components/UserTem'
+import UserTemWithoutMes from '../Components/UserTemWithoutMes'
 
 interface InputmessageType {
   text: string
@@ -38,7 +41,7 @@ const ChatInterFace = () => {
   const [isNewChat, setisNewChat] = useState<Boolean>(false)
   const [receiverUser, setreceiverUser] = useState<receiverUserType>()
   const [isSendClicked, setisSendClicked] = useState<boolean>(false)
-  const scrollRefMounted = useRef(false)
+  const scrollRefMounted = useRef<boolean>(false)
   const scrollRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch()
 
@@ -100,7 +103,6 @@ const ChatInterFace = () => {
       if (combineID) {
         const docRef = doc(db, 'UserChats', combineID)
         const docSnap = await getDoc(docRef);
-        console.log(docSnap.exists())
 
         if (docSnap.exists()) {
           setisNewChat(false)
@@ -137,6 +139,7 @@ const ChatInterFace = () => {
   }, [messages])
 
 
+  OnlineStatus({ currentUser })
 
   const handleSend = async () => {
     if (isNewChat && combineID) {
@@ -232,21 +235,28 @@ const ChatInterFace = () => {
     }
   }
 
-  console.log(isNewChat)
-
   return (
     <div className='border-2 h-[100vh] relative border-solid border-red-500'>
-      <Link to={'/'}>Back</Link>
-      <div className='border-solid border-pink-500 border-2 h-[88%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'>
+      <div className=''>
+        <button className=''>
+        <Link to={'/'}>Back</Link>
+        </button>
+        
+        <div className=''>
+        {/* { receiverUser? <UserTem user={receiverUser} lastmessage='' /> : '' } */}
+        { recieverId? <UserTemWithoutMes name={''} id={recieverId}/> : '' }
+        </div>
+      </div>
+      <div className='border-solid border-pink-500 border-2 h-[75%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'>
         {
           messages?.map((message, index) => {
             if (message.senderId === currentUser.id) {
               if (messages.length === index + 1) {
-                scrollRefMounted.current=true
+                scrollRefMounted.current = true
                 return <div>
                   <MessageTemRight message={message} key={message.id} />
-                  <div ref={scrollRef} className='bg-transparent'>
-                    <h1 className='text-9xl text-transparent'>Sifat Chat</h1>
+                  <div ref={scrollRef} className='bg-transparent '>
+                    <h1 className='text-9xl text-transparent '>Sifat Chat</h1>
                   </div>
                 </div>
               }
@@ -255,11 +265,11 @@ const ChatInterFace = () => {
             else {
               if (receiverUser) {
                 if (messages.length === index + 1) {
-                  scrollRefMounted.current=true
+                  scrollRefMounted.current = true
                   return <div>
                     <MessageTem message={message} receiverUser={receiverUser} key={message.id} />
                     <div ref={scrollRef} className='bg-transparent'>
-                      <h1 className='text-9xl text-transparent'>Sifat Chat</h1>
+                      <h1 className='text-9xl text-transparent '>Sifat Chat</h1>
                     </div>
                   </div>
                 }

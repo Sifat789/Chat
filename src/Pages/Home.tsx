@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import UserTem from '../Components/UserTem';
 import { auth, logOut } from '../Firebase';
 import { onAuthStateChanged } from 'firebase/auth/cordova';
 import { useNavigate } from 'react-router-dom';
 import UserTemWithoutMes from '../Components/UserTemWithoutMes';
-import { collection, query, where, getDocs, or, Timestamp, onSnapshot, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, or, Timestamp, onSnapshot, orderBy, doc, updateDoc } from "firebase/firestore";
 import { db } from '../Firebase';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../Redux/ReduxStore';
 import { setCurUser } from '../Redux/CurUserSlice';
 import ConvoUserTem from '../Components/ConvoUserTem';
+import { OnlineStatus } from '../CustomHooks/OnlineStatus';
 
 interface currentUserType {
   name: string
@@ -38,8 +39,9 @@ const Home: React.FC = () => {
   const [SearchInput, setSearchInput] = useState<string>('')
   const [SearchUsers, setSearchUsers] = useState<searchUsersType[]>()
   const [convoUsers, setconvoUsers] = useState<convoUsersType[]>()
-  // const [ currentUser, setcurrentuser ] = useState<currentUserType>()
+  const [s, sets] = useState()
   const currentUser = useSelector((state: RootState) => state.CurUserSlice)
+  const queryRef = useRef<any>()
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -104,7 +106,6 @@ const Home: React.FC = () => {
         const querySnapshot = await getDocs(q)
         const convoUsersTmp: convoUsersType[] = []
         querySnapshot.forEach((doc) => {
-          console.log(doc.data().message)
           convoUsersTmp.push({
             messase: doc.data().message,
             timestamp: formatDateToLocal(doc.data().timestamp),
@@ -120,9 +121,10 @@ const Home: React.FC = () => {
     getConvo()
   }, [currentUser])
 
+
   useEffect(() => {
     if (currentUser.id) {
-      const q = query(collection(db, 'latestMessages', currentUser.id, 'latest'), orderBy('timestamp'))
+      const q = query(collection(db, 'latestMessages', currentUser.id, 'latest'), orderBy('timestamp', 'desc'))
       const unsub = onSnapshot(q, (querySnapshot) => {
         const convoUsersTmp: convoUsersType[] = []
         querySnapshot.forEach((doc) => {
@@ -138,11 +140,15 @@ const Home: React.FC = () => {
         setconvoUsers(convoUsersTmp)
       })
 
-      return unsub()
+      return unsub
     }
-  })
+  }, [])
 
-  // console.log(convoUsers)
+
+  OnlineStatus({currentUser})
+
+
+
 
   return (
     <div className='bg-gray-100'>

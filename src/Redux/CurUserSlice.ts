@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction  } from '@reduxjs/toolkit'
 
 
-interface currentUserType {
+export interface currentUserType {
     name: string
     id: string
   }
