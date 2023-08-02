@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { onSnapshot, doc } from 'firebase/firestore'
 import { db } from '../Firebase'
 import { recieverType } from './ConvoUserTem'
@@ -30,7 +29,7 @@ const UserTemWithoutMes: React.FC<UserTemWithoutMes> = ({ name, id }) => {
   }, [])
   return (
 
-    <div className='border-2 border-solid border-red-400 bg-white shadow-lg flex space-x-6 items-center py-3 rounded-md'>
+    <div className=' bg-white shadow-lg flex space-x-6 items-center py-3 rounded-md'>
       <div className='flex'>
         <span className='h-11 w-11 ml-3 flex items-center justify-center bg-blue-500 rounded-full'>{name? name[0] : reciever?.name[0]}</span>
         {

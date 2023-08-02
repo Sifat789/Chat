@@ -11,7 +11,6 @@ export const OnlineStatus: React.FC<OnlineStatusType> = ({ currentUser}) => {
     // setting online status
     const handleOnline = (value: boolean) => {
         if (currentUser.id) {
-            console.log(currentUser.id);
             const userRef = doc(db, 'UserInfo', currentUser.id);
             updateDoc(userRef, {
                 isOnline: value,

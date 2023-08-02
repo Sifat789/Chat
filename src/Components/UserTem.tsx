@@ -28,7 +28,7 @@ const UserTem: React.FC<UserTemType> = ({ user, lastmessage }) => {
   }
 
   return (
-    <Link to={`/chatroom/${user.id}/${combineID()}`}>
+    <Link to={ user.id === currentUser.id? '/' : `/chatroom/${user.id}/${combineID()}` }>
       <div className='border-2 border-solid border-red-400 bg-white shadow-lg flex space-x-6 items-center py-3 rounded-md justify-between'>
         <div className='flex items-center space-x-3'>
 

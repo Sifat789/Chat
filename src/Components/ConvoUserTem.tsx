@@ -3,7 +3,7 @@ import { convoUsersType } from '../Pages/Home'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { RootState } from '../Redux/ReduxStore'
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../Firebase'
 
 interface ConvoUserTemType {
@@ -29,6 +29,7 @@ const ConvoUserTem: React.FC<ConvoUserTemType> = ({ user }) => {
 
     }
 
+    //getting live onlineStatus
     useEffect(() => {
         const unsub = onSnapshot(doc(db, 'UserInfo', user.recieverid), (doc) => {
             if (doc.exists()) {
@@ -48,9 +49,10 @@ const ConvoUserTem: React.FC<ConvoUserTemType> = ({ user }) => {
         else return message
     }
 
+
     return (
         <Link to={`/chatroom/${user.recieverid}/${combineID()}`}>
-            <div className='border-2 border-solid border-red-400 bg-white shadow-lg flex space-x-6 items-center py-3 rounded-md justify-between'>
+            <div className=' bg-white shadow-lg flex space-x-6 items-center py-3 rounded-md justify-between'>
                 <div className='flex items-center space-x-3'>
                     <div className='flex'>
                         <span className='h-11 w-11 ml-3 flex items-center justify-center bg-blue-500 rounded-full'>{reciever?.name[0]}</span>
@@ -62,8 +64,8 @@ const ConvoUserTem: React.FC<ConvoUserTemType> = ({ user }) => {
                     </div>
 
                     <div>
-                        <h1 className='font-bold'>{reciever?.name}</h1>
-                        <h1>{user.senderId === currentUser.id ? `me: ${handleMessageLength(user.messase.text)}` : handleMessageLength(user.messase.text)}</h1>
+                        <h1 className={user.haveIseenIt? 'text-gray-800 font-semibold' : 'text-black font-bold'}>{reciever?.name}</h1>
+                        <h1 className={user.haveIseenIt? 'text-gray-800 font-medium text-sm' : 'font-bold'} >{user.senderId === currentUser.id ? `You: ${handleMessageLength(user.messase.text)}` : handleMessageLength(user.messase.text)}</h1>
                     </div>
                 </div>
             </div>
