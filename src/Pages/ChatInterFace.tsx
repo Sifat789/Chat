@@ -135,10 +135,11 @@ const ChatInterFace = () => {
         if (currentUser.id && recieverId) {
           const update = async () => {
             try {
-              const res = await updateDoc(doc(db, 'latestMessages', currentUser.id, 'latest', recieverId), {
+              await updateDoc(doc(db, 'latestMessages', currentUser.id, 'latest', recieverId), {
                 haveIseenIt: true
               })
             } catch (err) {
+              console.log(message)
               console.log(err)
             }
           }

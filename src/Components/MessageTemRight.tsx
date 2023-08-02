@@ -1,7 +1,5 @@
 import React from 'react';
 import { messagesType } from '../Pages/ChatInterFace';
-import { useSelector } from 'react-redux';
-import { RootState } from '../Redux/ReduxStore';
 
 interface MessageTemType {
    message: messagesType
@@ -9,7 +7,6 @@ interface MessageTemType {
 
 const MessageTemRight: React.FC<MessageTemType> = ({message}) => {
 
-    const currentUser = useSelector((state:RootState)  => state.CurUserSlice)
 
 
     function formatDateToLocal(timestamp:any) {
@@ -28,9 +25,9 @@ const MessageTemRight: React.FC<MessageTemType> = ({message}) => {
         return localDateTimeString;
       }
 
-    const handleWidthLength = (length:number) => {
-        return Math.min(length,25)
-    }
+    // const handleWidthLength = (length:number) => {
+    //     return Math.min(length,25)
+    // }
     return (
         <div className='flex flex-col'>
             <span className='self-center mb-2'>{formatDateToLocal(message.date)}</span>
