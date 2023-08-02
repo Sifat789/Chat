@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: "AIzaSyBHdmTAtuQ56PGAeSU4tG33NjIZ4TYs_Ho",
-  authDomain: "auth-84f82.firebaseapp.com",
-  databaseURL: "https://auth-84f82-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "auth-84f82",
-  storageBucket: "auth-84f82.appspot.com",
-  messagingSenderId: "741375467458",
-  appId: "1:741375467458:web:ca165a61749aaaafb3805b"
+  apiKey: "AIzaSyCipiNwHSJgMps1ufe1ezE_wkU2h8MUBbw",
+  authDomain: "sifatchat.firebaseapp.com",
+  projectId: "sifatchat",
+  storageBucket: "sifatchat.appspot.com",
+  messagingSenderId: "276379923633",
+  appId: "1:276379923633:web:7be6c98ebc218c189a9e90",
+  measurementId: "G-EBKN22BXML"
 };
 
 
