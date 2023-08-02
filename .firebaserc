@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "auth-84f82"
-  }
+    "default": "sifatchat",
+    "sifatchat": "sifatchat"
+  },
+  "targets": {},
+  "etags": {}
 }
