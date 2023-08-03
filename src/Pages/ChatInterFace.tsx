@@ -129,7 +129,7 @@ const ChatInterFace = () => {
     getMessages()
 
 
-    InputmessageRef.current?.focus()
+    // InputmessageRef.current?.focus()
   }, [])
 
   //updating haveIseenIt
@@ -214,7 +214,7 @@ const ChatInterFace = () => {
             })
           }
           setisNewChat(false)
-          InputmessageRef.current?.focus()
+          
         } catch (err) {
           console.log(err)
         }
@@ -246,7 +246,7 @@ const ChatInterFace = () => {
                 })
               })
 
-              InputmessageRef.current?.focus()
+              
             }
           }
         } catch (err) {
@@ -269,7 +269,7 @@ const ChatInterFace = () => {
           {recieverId ? <UserTemWithoutMes name={''} id={recieverId} /> : ''}
         </div>
       </div>
-      <div className=' h-[78%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'>
+      <div className={ isNewChat? 'flex items-end justify-center h-[78%]' : 'relative h-[78%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'}>
         {
           messages?.map((message, index) => {
             if (index + 1 === messages.length) {
@@ -306,9 +306,13 @@ const ChatInterFace = () => {
           })
         }
 
-        {/* <div className='bg-red-100 hidden'>
-          <h1 className='text-9xl text-transparent '>Sifat Chat</h1>
-        </div> */}
+        {
+           isNewChat && receiverUser?.name? (
+            <div className='text-gray-400 font-semibold text-lg'>
+              {`Say hi 👋 to ${receiverUser?.name}`}
+            </div>
+           ) : ''
+        }
 
 
 
@@ -318,10 +322,10 @@ const ChatInterFace = () => {
       <div className='absolute bottom-0 sm:bottom-1 flex justify-between border-solid border-green-500 border-2 w-[99vw] bg-gray-100 rounded-full py-1'>
         <input onKeyDown={(e) => {
           if (e.code === 'Enter') {
-            setInputmessage(InputmessageTmp); setInputmessageTmp({ text: '', img: '' });
+            setInputmessage(InputmessageTmp); setInputmessageTmp({ text: '', img: '' }); InputmessageRef.current?.focus();
           }
         }} ref={InputmessageRef} value={InputmessageTmp?.text} onChange={(e) => setInputmessageTmp({ text: (e.target as HTMLInputElement).value, img: '' })} className='w-[90%] h-9 bg-gray-100 outline-none rounded-full' type="text" />
-        <button onClick={() => { setInputmessage(InputmessageTmp); setInputmessageTmp({ text: '', img: '' }); }} className=''><SendIcon /></button>
+        <button onClick={() => { setInputmessage(InputmessageTmp); setInputmessageTmp({ text: '', img: '' }); InputmessageRef.current?.focus(); }} className=''><SendIcon /></button>
       </div>
     </div>
   )

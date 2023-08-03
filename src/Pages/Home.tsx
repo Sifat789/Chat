@@ -37,6 +37,7 @@ const Home: React.FC = () => {
   const [SearchUsers, setSearchUsers] = useState<searchUsersType[]>()
   const [convoUsers, setconvoUsers] = useState<convoUsersType[]>()
   const currentUser = useSelector((state: RootState) => state.CurUserSlice)
+  const [ isSearchUserFound, setisSearchUserFound ] = useState<boolean>()
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -65,6 +66,10 @@ const Home: React.FC = () => {
     const q = query(collection(db, "UserInfo"), or(where("name", "==", SearchInput), where("email", "==", SearchInput)));
     const SearchUsersTmp: searchUsersType[] = []
     const querysnapshot = await getDocs(q)
+    if(querysnapshot.empty) {
+      setisSearchUserFound(false)
+      console.log('n')
+    } else setisSearchUserFound(true)
     querysnapshot.forEach((doc) => {
       SearchUsersTmp.push({
         name: doc.data().name,
@@ -148,6 +153,15 @@ const Home: React.FC = () => {
          SearchUsers?.map(user => {
           return <UserTem user={user} lastmessage={''} key={user.id} />
         })
+      }
+
+      {
+         isSearchUserFound? '' : (
+          <div className='bg-white shadow-lg py-1 rounded-sm flex flex-col items-center justify-center text-gray-400'>
+              <h1>No matches found</h1>
+              <h1>Make sure to search by <span className='font-bold'>exact</span> name or email</h1>
+          </div>
+         )
       }
 
 
