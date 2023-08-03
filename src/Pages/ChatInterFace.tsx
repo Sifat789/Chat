@@ -259,7 +259,7 @@ const ChatInterFace = () => {
   }, [Inputmessage])
 
   return (
-    <div className=' h-[100vh] relative'>
+    <div className=' h-[95vh] sm:h-[100vh] relative'>
       <div className='flex bg-white'>
         <button className=''>
           <Link to={'/'}><BackIcon /></Link>
@@ -269,7 +269,7 @@ const ChatInterFace = () => {
           {recieverId ? <UserTemWithoutMes name={''} id={recieverId} /> : ''}
         </div>
       </div>
-      <div className=' h-[75%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'>
+      <div className=' h-[78%] overflow-y-auto bg-white flex flex-col space-y-12 scrollbar-none'>
         {
           messages?.map((message, index) => {
             if (index + 1 === messages.length) {
@@ -315,7 +315,7 @@ const ChatInterFace = () => {
 
       </div>
 
-      <div className='absolute bottom-1 flex justify-between border-solid border-green-500 border-2 w-[99vw] bg-gray-100 rounded-full py-1'>
+      <div className='absolute bottom-0 sm:bottom-1 flex justify-between border-solid border-green-500 border-2 w-[99vw] bg-gray-100 rounded-full py-1'>
         <input onKeyDown={(e) => {
           if (e.code === 'Enter') {
             setInputmessage(InputmessageTmp); setInputmessageTmp({ text: '', img: '' });
