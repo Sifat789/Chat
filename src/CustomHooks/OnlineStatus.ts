@@ -29,10 +29,12 @@ export const OnlineStatus: React.FC<OnlineStatusType> = ({ currentUser}) => {
             handleOnline(true);
         }
         window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('unload', handleBeforeUnload);
 
         return () => {
             handleOnline(false);
             window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handleBeforeUnload);
         };
     }, [currentUser.id]);
     
