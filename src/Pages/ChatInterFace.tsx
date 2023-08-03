@@ -65,6 +65,11 @@ const ChatInterFace = () => {
     scrollRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' })
   }
 
+  const getFirstWord = (str:string) => {
+    const words = str.trim().split(/\s+/);
+    return words[0];
+  }
+
   //Getting users
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -308,8 +313,8 @@ const ChatInterFace = () => {
 
         {
            isNewChat && receiverUser?.name? (
-            <div className='text-gray-400 font-semibold text-lg'>
-              {`Say hi 👋 to ${receiverUser?.name}`}
+            <div className='text-gray-400 font-semibold'>
+              {`Say hi 👋 to ${getFirstWord(receiverUser?.name)}`}
             </div>
            ) : ''
         }

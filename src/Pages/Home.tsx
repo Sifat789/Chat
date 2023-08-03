@@ -37,7 +37,7 @@ const Home: React.FC = () => {
   const [SearchUsers, setSearchUsers] = useState<searchUsersType[]>()
   const [convoUsers, setconvoUsers] = useState<convoUsersType[]>()
   const currentUser = useSelector((state: RootState) => state.CurUserSlice)
-  const [ isSearchUserFound, setisSearchUserFound ] = useState<boolean>()
+  const [ isSearchUserFound, setisSearchUserFound ] = useState<boolean>(true) // setting it true by default so that initilly the no matches messages stays hidden.
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -157,9 +157,9 @@ const Home: React.FC = () => {
 
       {
          isSearchUserFound? '' : (
-          <div className='bg-white shadow-lg py-1 rounded-sm flex flex-col items-center justify-center text-gray-400'>
-              <h1>No matches found</h1>
-              <h1>Make sure to search by <span className='font-bold'>exact</span> name or email</h1>
+          <div className='bg-white shadow-lg py-1 rounded-sm   text-gray-400'>
+              <h1 className='text-center'>No matches found</h1>
+              <h1 className='text-center'>Make sure to search by <span className='font-bold'>exact</span> full name or email</h1>
           </div>
          )
       }
