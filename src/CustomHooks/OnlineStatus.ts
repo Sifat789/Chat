@@ -24,17 +24,25 @@ export const OnlineStatus: React.FC<OnlineStatusType> = ({ currentUser}) => {
         handleOnline(false);
     }
 
+    const handleVisibilityChange = () => {
+        if(document.hidden) {
+            handleOnline(false)
+        } else handleOnline(true)
+    }
+
     useEffect(() => {
         if (navigator.onLine) {
             handleOnline(true);
         }
         window.addEventListener('beforeunload', handleBeforeUnload);
         window.addEventListener('unload', handleBeforeUnload);
+        window.addEventListener('visibilitychange', handleVisibilityChange);
 
         return () => {
             handleOnline(false);
             window.removeEventListener('beforeunload', handleBeforeUnload);
             window.removeEventListener('unload', handleBeforeUnload);
+            window.removeEventListener('visibilitychange', handleVisibilityChange);
         };
     }, [currentUser.id]);
     
