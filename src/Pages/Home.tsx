@@ -137,7 +137,7 @@ const Home: React.FC = () => {
       <button onClick={handleSignOut} className='bg-blue-500 rounded-md text-white font-semibold px-2 py-1 mt-2'>SignOut</button>
 
       <div className='mt-8 flex flex-col justify-center items-center'>
-        <h1 className='font-semibold text-lg'>Find a User</h1>
+        <h1 className='font-semibold text-lg'>Find a User <span className='text-sm text-gray-400'>(Search for "sifat" if your friends aren't here)</span></h1>
         <div className='flex mb-2 bg-white rounded-full px-3 py-2'>
           <input className='w-[80vw] sm:w-[35vw] text-lg outline-none' onChange={(e) => setSearchInput((e.target as HTMLInputElement).value)} placeholder='Search by name or email...' type="text" />
           <button onClick={handleSearch} ><SearchIcon/></button>

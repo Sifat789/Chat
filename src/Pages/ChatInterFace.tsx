@@ -45,6 +45,7 @@ const ChatInterFace = () => {
   const scrollRefMounted = useRef<boolean>(false)
   const scrollRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch()
+  const InputmessageRef = useRef<HTMLInputElement>(null)
 
 
 
@@ -97,7 +98,7 @@ const ChatInterFace = () => {
     scroll()
   }, [messages])
 
- 
+
   //Getting previous messages
   useEffect(() => {
     const getMessages = async () => {
@@ -126,6 +127,9 @@ const ChatInterFace = () => {
     }
 
     getMessages()
+
+
+    InputmessageRef.current?.focus()
   }, [])
 
   //updating haveIseenIt
@@ -210,6 +214,7 @@ const ChatInterFace = () => {
             })
           }
           setisNewChat(false)
+          InputmessageRef.current?.focus()
         } catch (err) {
           console.log(err)
         }
@@ -240,6 +245,8 @@ const ChatInterFace = () => {
                   id: generateRandomString()
                 })
               })
+
+              InputmessageRef.current?.focus()
             }
           }
         } catch (err) {
@@ -253,7 +260,7 @@ const ChatInterFace = () => {
 
   return (
     <div className=' h-[100vh] relative'>
-      <div>
+      <div className='flex bg-white'>
         <button className=''>
           <Link to={'/'}><BackIcon /></Link>
         </button>
@@ -309,7 +316,11 @@ const ChatInterFace = () => {
       </div>
 
       <div className='absolute bottom-1 flex justify-between border-solid border-green-500 border-2 w-[99vw] bg-gray-100 rounded-full py-1'>
-        <input value={InputmessageTmp?.text} onChange={(e) => setInputmessageTmp({ text: (e.target as HTMLInputElement).value, img: '' })} className='w-[90%] h-9 bg-gray-100 outline-none rounded-full' type="text" />
+        <input onKeyDown={(e) => {
+          if (e.code === 'Enter') {
+            setInputmessage(InputmessageTmp); setInputmessageTmp({ text: '', img: '' });
+          }
+        }} ref={InputmessageRef} value={InputmessageTmp?.text} onChange={(e) => setInputmessageTmp({ text: (e.target as HTMLInputElement).value, img: '' })} className='w-[90%] h-9 bg-gray-100 outline-none rounded-full' type="text" />
         <button onClick={() => { setInputmessage(InputmessageTmp); setInputmessageTmp({ text: '', img: '' }); }} className=''><SendIcon /></button>
       </div>
     </div>

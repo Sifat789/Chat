@@ -29,7 +29,7 @@ const UserTemWithoutMes: React.FC<UserTemWithoutMes> = ({ name, id }) => {
   }, [])
   return (
 
-    <div className=' bg-white shadow-lg flex space-x-6 items-center py-3 rounded-md'>
+    <div className=' bg-transparent  flex space-x-6 items-center py-3 rounded-md'>
       <div className='flex'>
         <span className='h-11 w-11 ml-3 flex items-center justify-center bg-blue-500 rounded-full'>{name? name[0] : reciever?.name[0]}</span>
         {
