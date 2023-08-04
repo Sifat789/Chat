@@ -93,7 +93,6 @@ const Home: React.FC = () => {
             id: user.uid,
           }));
         }
-        // console.log(user);
       }
     });
 

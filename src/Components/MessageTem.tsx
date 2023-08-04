@@ -24,8 +24,6 @@ const MessageTem: React.FC<MessageTemType> = ({message, receiverUser}) => {
   
     return localDateTimeString;
   }
-
-  // console.log('reiname',receiverUser)
   
 
   useEffect(() => {
