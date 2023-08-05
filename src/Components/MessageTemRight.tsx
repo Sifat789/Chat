@@ -24,10 +24,7 @@ const MessageTemRight: React.FC<MessageTemType> = ({message}) => {
       
         return localDateTimeString;
       }
-
-    // const handleWidthLength = (length:number) => {
-    //     return Math.min(length,25)
-    // }
+      
     return (
         <div className='flex flex-col'>
             <span className='self-center mb-2'>{formatDateToLocal(message.date)}</span>

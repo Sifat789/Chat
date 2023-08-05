@@ -19,8 +19,6 @@ export const OnlineStatus: React.FC<OnlineStatusType> = ({ currentUser}) => {
     };
 
     function handleBeforeUnload() {
-        // event.preventDefault();
-        // event.returnValue = 'Are you sure you want to leave?';
         handleOnline(false);
     }
 
