@@ -299,9 +299,6 @@ const ChatInterFace = () => {
                   else scrollRefMounted.current = true
                   return <div ref={scrollRef} >
                     <MessageTem message={message} receiverUser={receiverUser} key={message.id} />
-                    {/* <div ref={scrollRef} className='bg-red-100'>
-                      <h1 className='text-9xl text-transparent '>Sifat Chat</h1>
-                    </div> */}
                   </div>
                 }
                 else return <MessageTem message={message} receiverUser={receiverUser} key={message.id} />
